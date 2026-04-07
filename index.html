@@ -63,7 +63,7 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
 <body>
 <div class="app">
 <div class="header">
-<div class="header-inner"><span class="header-logo">🌸</span><div class="header-text"><h1>Floral Image</h1><p>Revamp Log</p></div></div>
+<div class="header-inner"><span class="header-logo">ð¸</span><div class="header-text"><h1>Floral Image</h1><p>Revamp Log</p></div></div>
 <div class="progress-bar" id="progress-bar"><div class="pb-seg active" id="pb0"></div><div class="pb-seg" id="pb1"></div><div class="pb-seg" id="pb2"></div><div class="pb-seg" id="pb3"></div></div>
 </div>
 <div class="content">
@@ -74,7 +74,7 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
 <div class="field"><label>Serial number photo</label>
 <div class="photo-capture" id="box-serial">
 <input type="file" accept="image/*" capture="environment" id="file-serial" onchange="handlePhoto(this,'img-serial','box-serial','retake-serial','ph-serial')">
-<div class="photo-placeholder" id="ph-serial"><span class="photo-icon">🏷️</span><div class="photo-label">Photograph serial number</div><div class="photo-sub">Tap to open camera</div></div>
+<div class="photo-placeholder" id="ph-serial"><span class="photo-icon">ð·ï¸</span><div class="photo-label">Photograph serial number</div><div class="photo-sub">Tap to open camera</div></div>
 <img class="photo-preview" id="img-serial"><button class="photo-retake" id="retake-serial" onclick="retakePhoto('file-serial',event)">Retake</button>
 </div></div>
 <div class="divider"><span>or type it</span></div>
@@ -85,7 +85,7 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
 <div class="field"><label>Current arrangement</label>
 <div class="photo-capture" id="box-before">
 <input type="file" accept="image/*" capture="environment" id="file-before" onchange="handlePhoto(this,'img-before','box-before','retake-before','ph-before')">
-<div class="photo-placeholder" id="ph-before"><span class="photo-icon">📸</span><div class="photo-label">Photograph before revamp</div><div class="photo-sub">Show the full arrangement clearly</div></div>
+<div class="photo-placeholder" id="ph-before"><span class="photo-icon">ð¸</span><div class="photo-label">Photograph before revamp</div><div class="photo-sub">Show the full arrangement clearly</div></div>
 <img class="photo-preview" id="img-before"><button class="photo-retake" id="retake-before" onclick="retakePhoto('file-before',event)">Retake</button>
 </div></div>
 </div>
@@ -99,14 +99,14 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
 <div class="field"><label>Finished arrangement</label>
 <div class="photo-capture" id="box-after">
 <input type="file" accept="image/*" capture="environment" id="file-after" onchange="handlePhoto(this,'img-after','box-after','retake-after','ph-after')">
-<div class="photo-placeholder" id="ph-after"><span class="photo-icon">💐</span><div class="photo-label">Photograph finished revamp</div><div class="photo-sub">Show the full arrangement clearly</div></div>
+<div class="photo-placeholder" id="ph-after"><span class="photo-icon">ð</span><div class="photo-label">Photograph finished revamp</div><div class="photo-sub">Show the full arrangement clearly</div></div>
 <img class="photo-preview" id="img-after"><button class="photo-retake" id="retake-after" onclick="retakePhoto('file-after',event)">Retake</button>
 </div></div>
 <div class="status-msg" id="status-msg"></div>
 </div>
 <div class="step" id="step-done">
 <div class="success-screen">
-<span class="success-icon">✅</span><h2>Record saved!</h2>
+<span class="success-icon">â</span><h2>Record saved!</h2>
 <p>Photos uploaded to Google Drive and logged to your Revamp Sheet.</p>
 <div class="success-meta" id="success-meta"></div>
 <button onclick="resetForm()" class="btn primary" style="margin-top:10px;width:100%;max-width:300px">Log another vase</button>
@@ -119,7 +119,7 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
 </div>
 </div>
 <script>
-const APPS_SCRIPT_URL='YOUR_APPS_SCRIPT_URL_HERE';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycby7yxqoXberQR_uXBYHNzhrfBT8pDlmYszHwIBEdu-kTqC1_H-Luro5qzTAZXuwyQJQMQ/exec';
 let currentStep=0;const totalSteps=4;
 function updateNav(){const back=document.getElementById('btn-back'),next=document.getElementById('btn-next'),nav=document.getElementById('bottom-nav');if(currentStep===totalSteps){nav.style.display='none';document.getElementById('progress-bar').style.display='none';return}back.style.display=currentStep>0?'block':'none';next.textContent=currentStep===totalSteps-1?'Submit record':'Next';next.disabled=false;for(let i=0;i<totalSteps;i++){const seg=document.getElementById('pb'+i);seg.className='pb-seg';if(i<currentStep)seg.classList.add('done');else if(i===currentStep)seg.classList.add('active')}}
 function showStep(n){document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));document.getElementById(n===totalSteps?'step-done':'step-'+n).classList.add('active');currentStep=n;updateNav();window.scrollTo({top:0,behavior:'smooth'})}
