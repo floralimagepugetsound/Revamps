@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FI Gallery">
+<meta name="theme-color" content="#1a3a2a">
+<title>Floral Image - Revamp Gallery</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap');
+:root{--green-deep:#1a3a2a;--green-mid:#2d6649;--green-light:#4a9968;--green-pale:#e8f2ec;--cream:#faf8f4;--text:#1a2a1e;--text-muted:#6b8070;--border:rgba(45,102,73,0.18);--radius:14px;--radius-sm:8px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--text)}
+.header{background:var(--green-deep);padding:env(safe-area-inset-top,0) 0 0;position:sticky;top:0;z-index:10}
+.header-inner{padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.header-left{display:flex;align-items:center;gap:10px}
+.header-logo{font-size:22px}
+.header-text h1{font-family:'DM Serif Display',serif;font-size:17px;color:#fff;font-weight:400}
+.header-text p{font-size:11px;color:rgba(255,255,255,0.55);text-transform:uppercase;margin-top:1px}
+.refresh-btn{background:rgba(255,255,255,0.15);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:20px;cursor:pointer}
+.content{padding:20px 16px 40px;max-width:520px;margin:0 auto}
+.loading{text-align:center;padding:60px 20px;color:var(--text-muted)}
+.spinner{width:36px;height:36px;border:3px solid rgba(45,102,73,0.2);border-top-color:var(--green-mid);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err{text-align:center;padding:40px 20px;color:#c0392b;font-size:14px}
+.day-group{margin-bottom:28px}
+.day-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.day-title{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;color:var(--green-deep)}
+.day-count{font-size:12px;color:var(--text-muted);background:var(--green-pale);padding:3px 10px;border-radius:20px}
+.card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:14px}
+.card-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between}
+.card-location{font-size:14px;font-weight:500;color:var(--text)}
+.card-serial{font-size:11px;color:var(--green-mid);margin-top:2px}
+.card-time{font-size:11px;color:var(--text-muted);white-space:nowrap;margin-left:8px}
+.photos-row{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--border)}
+.photo-cell{position:relative;aspect-ratio:1;overflow:hidden;background:var(--green-pale);cursor:pointer}
+.photo-cell img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .2s}
+.photo-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(26,58,42,0.75));color:#fff;font-size:10px;font-weight:500;padding:14px 7px 5px;text-transform:uppercase;letter-spacing:.05em}
+.no-photo{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;color:var(--text-muted);font-size:11px}
+.no-photo span{font-size:22px}
+.extras-row{display:grid;gap:2px;background:var(--border)}
+.card-footer{padding:10px 14px;border-top:1px solid var(--border)}
+.stems{font-size:12px;color:var(--text-muted);margin-bottom:3px}
+.stems strong{color:var(--text)}
+.notes{font-size:12px;color:var(--text-muted);font-style:italic;margin-bottom:3px}
+.staff{font-size:11px;color:var(--green-mid)}
+.empty{text-align:center;padding:60px 20px}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty h2{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:var(--green-deep);margin-bottom:8px}
+.empty p{font-size:14px;color:var(--text-muted)}
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:200;align-items:center;justify-content:center;flex-direction:column;padding:20px}
+.lightbox.on{display:flex}
+.lightbox img{max-width:100%;max-height:80vh;object-fit:contain;border-radius:8px}
+.lb-close{position:absolute;top:calc(env(safe-area-inset-top,0px) + 16px);right:16px;background:rgba(255,255,255,0.2);border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer}
+.lb-caption{color:rgba(255,255,255,0.65);font-size:13px;margin-top:14px;text-align:center}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <span class="header-logo">&#127800;</span>
+      <div class="header-text"><h1>Floral Image</h1><p>Revamp Gallery</p></div>
+    </div>
+    <button class="refresh-btn" id="rb">&#8635;</button>
+  </div>
+</div>
+<div class="content" id="content"><div class="loading"><div class="spinner"></div><p>Loading revamps...</p></div></div>
+<div class="lightbox" id="lb"><button class="lb-close" id="lbc">&#x2715;</button><img id="lbi" src="" alt=""><div class="lb-caption" id="lbcap"></div></div>
+<script>
+var URL='https://script.google.com/macros/s/AKfycbycfZwUTmXZLuuaDEX7tLkXG-1V5p6ZFPqqQqJYnwWBhieWhMfMcF1MSka4IBnG9rNi7w/exec';
+function fmtTime(s){try{return new Date(s).toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
+function fmtDate(s){try{var d=new Date(s),t=new Date(),y=new Date();y.setDate(t.getDate()-1);if(d.toDateString()===t.toDateString())return 'Today';if(d.toDateString()===y.toDateString())return 'Yesterday';return d.toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'});}catch(e){return s;}}
+function dateKey(s){try{return new Date(s).toDateString();}catch(e){return s;}}
+function openLb(src,cap){document.getElementById('lbi').src=src;document.getElementById('lbcap').textContent=cap||'';document.getElementById('lb').classList.add('on');}
+document.getElementById('lbc').addEventListener('click',function(){document.getElementById('lb').classList.remove('on');document.getElementById('lbi').src='';});
+document.getElementById('lb').addEventListener('click',function(e){if(e.target===this){this.classList.remove('on');document.getElementById('lbi').src='';}});
+function photoCell(url,lbl,cap){
+  var d=document.createElement('div');d.className='photo-cell';
+  if(url&&url.length>10){
+    var img=document.createElement('img');img.src=url;img.alt=lbl;img.loading='lazy';d.appendChild(img);
+    var l=document.createElement('div');l.className='photo-label';l.textContent=lbl;d.appendChild(l);
+    d.addEventListener('click',function(){openLb(url,cap);});
+  }else{
+    d.innerHTML='<div class="no-photo"><span>&#128247;</span><span>No photo</span></div>';
+  }
+  return d;
+}
+function render(records){
+  var c=document.getElementById('content');c.innerHTML='';
+  if(!records||!records.length){c.innerHTML='<div class="empty"><div class="empty-icon">&#127800;</div><h2>No revamps yet</h2><p>Records will appear here once staff start logging.</p></div>';return;}
+  var groups={},order=[];
+  records.forEach(function(r){var k=dateKey(r.timestamp);if(!groups[k]){groups[k]=[];order.push(k);}groups[k].push(r);});
+  order.forEach(function(dk){
+    var recs=groups[dk],g=document.createElement('div');g.className='day-group';
+    var dh=document.createElement('div');dh.className='day-header';
+    dh.innerHTML='<div class="day-title">'+fmtDate(recs[0].timestamp)+'</div><div class="day-count">'+recs.length+' vase'+(recs.length>1?'s':'')+'</div>';
+    g.appendChild(dh);
+    recs.forEach(function(r){
+      var card=document.createElement('div');card.className='card';
+      var ch=document.createElement('div');ch.className='card-header';
+      ch.innerHTML='<div><div class="card-location">'+(r.location||'Unknown location')+'</div>'+(r.serial?'<div class="card-serial">'+r.serial+'</div>':'')+'</div><div class="card-time">'+fmtTime(r.timestamp)+'</div>';
+      card.appendChild(ch);
+      var pr=document.createElement('div');pr.className='photos-row';
+      pr.appendChild(photoCell(r.beforePhoto,'Before',(r.location||'')+' — Before'));
+      pr.appendChild(photoCell(r.afterPhoto,'After',(r.location||'')+' — After'));
+      card.appendChild(pr);
+      var extras=[r.afterPhoto2,r.afterPhoto3,r.afterPhoto4,r.afterPhoto5,r.afterPhoto6].filter(function(u){return u&&u.length>10;});
+      if(extras.length){
+        var er=document.createElement('div');er.className='extras-row';er.style.gridTemplateColumns='repeat('+Math.min(extras.length,3)+',1fr)';
+        extras.slice(0,3).forEach(function(url,i){er.appendChild(photoCell(url,'Angle '+(i+2),(r.location||'')+' — Angle '+(i+2)));});
+        card.appendChild(er);
+      }
+      var hasFooter=r.stems||r.notes||r.staff;
+      if(hasFooter){
+        var f=document.createElement('div');f.className='card-footer';
+        if(r.stems)f.innerHTML+='<div class="stems"><strong>Stems:</strong> '+r.stems+'</div>';
+        if(r.notes)f.innerHTML+='<div class="notes">'+r.notes+'</div>';
+        if(r.staff)f.innerHTML+='<div class="staff">&#128100; '+r.staff+'</div>';
+        card.appendChild(f);
+      }
+      g.appendChild(card);
+    });
+    c.appendChild(g);
+  });
+}
+function load(){
+  document.getElementById('content').innerHTML='<div class="loading"><div class="spinner"></div><p>Loading revamps...</p></div>';
+  fetch(URL+'?action=gallery')
+    .then(function(r){return r.json();})
+    .then(function(d){if(d.status==='ok'){render(d.records);}else{document.getElementById('content').innerHTML='<div class="err">Could not load: '+(d.message||'error')+'</div>';}})
+    .catch(function(){document.getElementById('content').innerHTML='<div class="err">Connection error. Pull down to retry.</div>';});
+}
+document.getElementById('rb').addEventListener('click',load);
+load();
+</script>
+</body>
+</html>
