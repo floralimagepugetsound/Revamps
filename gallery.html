@@ -122,13 +122,13 @@ function render(records){
       ch.innerHTML='<div><div class="card-location">'+(r.location||'Unknown location')+'</div>'+(r.serial?'<div class="card-serial">'+r.serial+'</div>':'')+'</div><div class="card-time">'+fmtTime(r.timestamp)+'</div>';
       card.appendChild(ch);
       var pr=document.createElement('div');pr.className='photos-row';
-      pr.appendChild(photoCell(r.beforePhoto,'Before',(r.location||'')+' â Before'));
-      pr.appendChild(photoCell(r.afterPhoto,'After',(r.location||'')+' â After'));
+      pr.appendChild(photoCell(r.beforePhoto,'Before',(r.location||'')+' Ã¢ÂÂ Before'));
+      pr.appendChild(photoCell(r.afterPhoto,'After',(r.location||'')+' Ã¢ÂÂ After'));
       card.appendChild(pr);
       var extras=[r.afterPhoto2,r.afterPhoto3,r.afterPhoto4,r.afterPhoto5,r.afterPhoto6].map(toDriveImg).filter(function(u){return u&&u.length>10;});
       if(extras.length){
         var er=document.createElement('div');er.className='extras-row';er.style.gridTemplateColumns='repeat('+Math.min(extras.length,3)+',1fr)';
-        extras.slice(0,3).forEach(function(url,i){er.appendChild(photoCell(url,'Angle '+(i+2),(r.location||'')+' â Angle '+(i+2)));});
+        extras.slice(0,3).forEach(function(url,i){er.appendChild(photoCell(url,'Angle '+(i+2),(r.location||'')+' Ã¢ÂÂ Angle '+(i+2)));});
         card.appendChild(er);
       }
       var hasFooter=r.stems||r.notes||r.staff;
@@ -146,10 +146,19 @@ function render(records){
 }
 function load(){
   document.getElementById('content').innerHTML='<div class="loading"><div class="spinner"></div><p>Loading revamps...</p></div>';
-  fetch(URL+'?action=gallery')
-    .then(function(r){return r.json();})
-    .then(function(d){if(d.status==='ok'){render(d.records);}else{document.getElementById('content').innerHTML='<div class="err">Could not load: '+(d.message||'error')+'</div>';}})
-    .catch(function(){document.getElementById('content').innerHTML='<div class="err">Connection error. Pull down to retry.</div>';});
+  // Remove any previous script tag
+  var old=document.getElementById('gallery-script');
+  if(old)old.remove();
+  // Use script tag to bypass CSP
+  window._galleryCallback=function(d){
+    if(d.status==='ok'){render(d.records);}
+    else{document.getElementById('content').innerHTML='<div class="err">Could not load: '+(d.message||'error')+'</div>';}
+  };
+  var s=document.createElement('script');
+  s.id='gallery-script';
+  s.src=URL+'?action=gallery&callback=_galleryCallback';
+  s.onerror=function(){document.getElementById('content').innerHTML='<div class="err">Connection error. Tap refresh to retry.</div>';};
+  document.body.appendChild(s);
 }
 document.getElementById('rb').addEventListener('click',load);
 load();
