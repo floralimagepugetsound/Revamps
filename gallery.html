@@ -71,9 +71,18 @@ html,body{height:100%;background:var(--cream);font-family:'DM Sans',sans-serif;c
 <div class="lightbox" id="lb"><button class="lb-close" id="lbc">&#x2715;</button><img id="lbi" src="" alt=""><div class="lb-caption" id="lbcap"></div></div>
 <script>
 var URL='https://script.google.com/macros/s/AKfycbycfZwUTmXZLuuaDEX7tLkXG-1V5p6ZFPqqQqJYnwWBhieWhMfMcF1MSka4IBnG9rNi7w/exec';
-function fmtTime(s){try{return new Date(s).toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
-function fmtDate(s){try{var d=new Date(s),t=new Date(),y=new Date();y.setDate(t.getDate()-1);if(d.toDateString()===t.toDateString())return 'Today';if(d.toDateString()===y.toDateString())return 'Yesterday';return d.toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'});}catch(e){return s;}}
-function dateKey(s){try{return new Date(s).toDateString();}catch(e){return s;}}
+function fmtTime(s){try{return new Date(s).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',timeZone:'America/Los_Angeles'});}catch(e){return '';}}
+function fmtDate(s){try{
+  var opts={timeZone:'America/Los_Angeles'};
+  var dStr=new Date(s).toLocaleDateString('en-US',opts);
+  var todayStr=new Date().toLocaleDateString('en-US',opts);
+  var ydOpts=new Date();ydOpts.setDate(ydOpts.getDate()-1);
+  var ydStr=ydOpts.toLocaleDateString('en-US',opts);
+  if(dStr===todayStr)return 'Today';
+  if(dStr===ydStr)return 'Yesterday';
+  return new Date(s).toLocaleDateString('en-US',{weekday:'long',day:'numeric',month:'long',timeZone:'America/Los_Angeles'});
+}catch(e){return s;}}
+function dateKey(s){try{return new Date(s).toLocaleDateString('en-US',{timeZone:'America/Los_Angeles'});}catch(e){return s;}}
 function openLb(src,cap){document.getElementById('lbi').src=src;document.getElementById('lbcap').textContent=cap||'';document.getElementById('lb').classList.add('on');}
 document.getElementById('lbc').addEventListener('click',function(){document.getElementById('lb').classList.remove('on');document.getElementById('lbi').src='';});
 document.getElementById('lb').addEventListener('click',function(e){if(e.target===this){this.classList.remove('on');document.getElementById('lbi').src='';}});
@@ -87,6 +96,15 @@ function photoCell(url,lbl,cap){
     d.innerHTML='<div class="no-photo"><span>&#128247;</span><span>No photo</span></div>';
   }
   return d;
+}
+
+function toDriveImg(url){
+  if(!url||url.length<10)return url;
+  var m=url.match(//d/([a-zA-Z0-9_-]+)//);
+  if(m)return 'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w800';
+  var m2=url.match(/id=([a-zA-Z0-9_-]+)/);
+  if(m2)return 'https://drive.google.com/thumbnail?id='+m2[1]+'&sz=w800';
+  return url;
 }
 function render(records){
   var c=document.getElementById('content');c.innerHTML='';
@@ -104,13 +122,13 @@ function render(records){
       ch.innerHTML='<div><div class="card-location">'+(r.location||'Unknown location')+'</div>'+(r.serial?'<div class="card-serial">'+r.serial+'</div>':'')+'</div><div class="card-time">'+fmtTime(r.timestamp)+'</div>';
       card.appendChild(ch);
       var pr=document.createElement('div');pr.className='photos-row';
-      pr.appendChild(photoCell(r.beforePhoto,'Before',(r.location||'')+' — Before'));
-      pr.appendChild(photoCell(r.afterPhoto,'After',(r.location||'')+' — After'));
+      pr.appendChild(photoCell(r.beforePhoto,'Before',(r.location||'')+' â Before'));
+      pr.appendChild(photoCell(r.afterPhoto,'After',(r.location||'')+' â After'));
       card.appendChild(pr);
-      var extras=[r.afterPhoto2,r.afterPhoto3,r.afterPhoto4,r.afterPhoto5,r.afterPhoto6].filter(function(u){return u&&u.length>10;});
+      var extras=[r.afterPhoto2,r.afterPhoto3,r.afterPhoto4,r.afterPhoto5,r.afterPhoto6].map(toDriveImg).filter(function(u){return u&&u.length>10;});
       if(extras.length){
         var er=document.createElement('div');er.className='extras-row';er.style.gridTemplateColumns='repeat('+Math.min(extras.length,3)+',1fr)';
-        extras.slice(0,3).forEach(function(url,i){er.appendChild(photoCell(url,'Angle '+(i+2),(r.location||'')+' — Angle '+(i+2)));});
+        extras.slice(0,3).forEach(function(url,i){er.appendChild(photoCell(url,'Angle '+(i+2),(r.location||'')+' â Angle '+(i+2)));});
         card.appendChild(er);
       }
       var hasFooter=r.stems||r.notes||r.staff;
