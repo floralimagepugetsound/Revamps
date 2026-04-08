@@ -41,7 +41,7 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
 .photo-preview{width:100%;max-height:220px;object-fit:cover;display:none}
 .photo-retake{position:absolute;bottom:10px;right:10px;z-index:3;background:rgba(26,58,42,0.82);color:#fff;border:none;padding:6px 12px;border-radius:20px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;display:none}
 .extra-after-item{position:relative;margin-bottom:12px}
-.remove-extra{position:absolute;top:8px;right:8px;z-index:4;background:rgba(26,58,42,0.82);color:#fff;border:none;width:28px;height:28px;border-radius:50%;font-size:16px;cursor:pointer}
+.remove-extra{position:absolute;top:8px;right:8px;z-index:4;background:rgba(26,58,42,0.82);color:#fff;border:none;width:28px;height:28px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .add-photo-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--green-pale);border:1px solid rgba(45,102,73,0.2);color:var(--green-mid);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;padding:11px 14px;border-radius:var(--radius-sm);cursor:pointer;width:100%;margin-top:4px}
 .add-photo-btn:disabled{opacity:.4;cursor:not-allowed}
 .photo-count-hint{font-size:12px;color:var(--text-muted);text-align:center;margin-top:6px}
@@ -82,7 +82,8 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
       <div class="photo-capture" id="box-serial">
         <input type="file" accept="image/*" capture="environment" id="file-serial">
         <div class="photo-placeholder" id="ph-serial"><span class="photo-icon">&#127991;</span><div class="photo-label">Photograph serial number</div><div class="photo-sub">Tap to open camera</div></div>
-        <img class="photo-preview" id="img-serial"><button class="photo-retake" id="retake-serial" onclick="retakePhoto('file-serial',event)">Retake</button>
+        <img class="photo-preview" id="img-serial">
+        <button class="photo-retake" id="retake-serial" type="button">Retake</button>
       </div>
     </div>
     <div class="divider"><span>or type it</span></div>
@@ -94,13 +95,14 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
       <div class="photo-capture" id="box-before">
         <input type="file" accept="image/*" capture="environment" id="file-before">
         <div class="photo-placeholder" id="ph-before"><span class="photo-icon">&#128248;</span><div class="photo-label">Photograph before revamp</div><div class="photo-sub">Show the full arrangement clearly</div></div>
-        <img class="photo-preview" id="img-before"><button class="photo-retake" id="retake-before" onclick="retakePhoto('file-before',event)">Retake</button>
+        <img class="photo-preview" id="img-before">
+        <button class="photo-retake" id="retake-before" type="button">Retake</button>
       </div>
     </div>
   </div>
   <div class="step" id="step-2">
     <div class="step-label">Step 3 of 4</div><div class="step-title">Stems used</div>
-    <div class="field"><label>Stem types &amp; quantities</label><div id="stems-list"></div><button class="add-stem-btn" onclick="addStem()">+ Add stem type</button></div>
+    <div class="field"><label>Stem types &amp; quantities</label><div id="stems-list"></div><button class="add-stem-btn" id="add-stem-btn" type="button">+ Add stem type</button></div>
     <div class="field"><label>Notes</label><textarea id="notes" placeholder="Vase condition, special requests..."></textarea></div>
   </div>
   <div class="step" id="step-3">
@@ -109,13 +111,14 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
       <div class="photo-capture" id="box-after">
         <input type="file" accept="image/*" capture="environment" id="file-after">
         <div class="photo-placeholder" id="ph-after"><span class="photo-icon">&#128144;</span><div class="photo-label">Photograph finished revamp</div><div class="photo-sub">Show the full arrangement clearly</div></div>
-        <img class="photo-preview" id="img-after"><button class="photo-retake" id="retake-after" onclick="retakePhoto('file-after',event)">Retake</button>
+        <img class="photo-preview" id="img-after">
+        <button class="photo-retake" id="retake-after" type="button">Retake</button>
       </div>
     </div>
     <div class="field">
       <label>Extra angles <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);font-size:11px">(optional)</span></label>
       <div id="extra-after-list"></div>
-      <button class="add-photo-btn" id="add-extra-btn" onclick="addExtraAfter()">+ Add another angle</button>
+      <button class="add-photo-btn" id="add-extra-btn" type="button">+ Add another angle</button>
       <div class="photo-count-hint" id="photo-count-hint"></div>
     </div>
     <div class="status-msg" id="status-msg"></div>
@@ -125,134 +128,197 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
       <span class="success-icon">&#9989;</span><h2>Record saved!</h2>
       <p>Photos uploaded to Google Drive and logged to your Revamp Sheet.</p>
       <div class="success-meta" id="success-meta"></div>
-      <button onclick="resetForm()" class="btn primary" style="margin-top:10px;width:100%;max-width:300px">Log another vase</button>
+      <button id="btn-reset" class="btn primary" type="button" style="margin-top:10px;width:100%;max-width:300px">Log another vase</button>
     </div>
   </div>
 </div>
 <div class="bottom-nav" id="bottom-nav">
-  <button class="btn" id="btn-back" onclick="goBack()" style="display:none">Back</button>
-  <button class="btn primary" id="btn-next" onclick="goNext()">Next</button>
+  <button class="btn" id="btn-back" type="button" style="display:none">Back</button>
+  <button class="btn primary" id="btn-next" type="button">Next</button>
 </div>
 </div>
 <script>
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbycfZwUTmXZLuuaDEX7tLkXG-1V5p6ZFPqqQqJYnwWBhieWhMfMcF1MSka4IBnG9rNi7w/exec';
-const MAX_EXTRA=5;
-let currentStep=0,totalSteps=4,extraAfterCount=0;
+var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbycfZwUTmXZLuuaDEX7tLkXG-1V5p6ZFPqqQqJYnwWBhieWhMfMcF1MSka4IBnG9rNi7w/exec';
+var MAX_EXTRA=5;
+var currentStep=0;
+var totalSteps=4;
+var extraAfterCount=0;
 
 function updateNav(){
-  const back=document.getElementById('btn-back'),next=document.getElementById('btn-next'),nav=document.getElementById('bottom-nav');
+  var back=document.getElementById('btn-back');
+  var next=document.getElementById('btn-next');
+  var nav=document.getElementById('bottom-nav');
   if(currentStep===totalSteps){nav.style.display='none';document.getElementById('progress-bar').style.display='none';return;}
   back.style.display=currentStep>0?'block':'none';
   next.textContent=currentStep===totalSteps-1?'Submit record':'Next';
   next.disabled=false;
-  for(let i=0;i<totalSteps;i++){const s=document.getElementById('pb'+i);s.className='pb-seg';if(i<currentStep)s.classList.add('done');else if(i===currentStep)s.classList.add('active');}
+  for(var i=0;i<totalSteps;i++){
+    var s=document.getElementById('pb'+i);
+    s.className='pb-seg';
+    if(i<currentStep)s.classList.add('done');
+    else if(i===currentStep)s.classList.add('active');
+  }
 }
-function showStep(n){
-  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
-  document.getElementById(n===totalSteps?'step-done':'step-'+n).classList.add('active');
-  currentStep=n;updateNav();window.scrollTo({top:0,behavior:'smooth'});
-}
-function goBack(){if(currentStep>0)showStep(currentStep-1);}
-function goNext(){if(currentStep===totalSteps-1)submitForm();else showStep(currentStep+1);}
 
-function handlePhoto(input,imgId,boxId,retakeId,phId){
-  const file=input.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=function(e){
-    const img=document.getElementById(imgId);
-    img.src=e.target.result;img.style.display='block';
-    document.getElementById(phId).style.display='none';
-    document.getElementById(retakeId).style.display='block';
-    document.getElementById(boxId).classList.add('has-photo');
-  };
-  reader.readAsDataURL(file);
+function showStep(n){
+  var steps=document.querySelectorAll('.step');
+  for(var i=0;i<steps.length;i++)steps[i].classList.remove('active');
+  var id=n===totalSteps?'step-done':'step-'+n;
+  document.getElementById(id).classList.add('active');
+  currentStep=n;updateNav();
+  window.scrollTo(0,0);
 }
-function retakePhoto(fileId,event){event.stopPropagation();document.getElementById(fileId).click();}
+
+document.getElementById('btn-back').addEventListener('click',function(){if(currentStep>0)showStep(currentStep-1);});
+document.getElementById('btn-next').addEventListener('click',function(){if(currentStep===totalSteps-1)submitForm();else showStep(currentStep+1);});
+document.getElementById('btn-reset').addEventListener('click',resetForm);
+document.getElementById('add-stem-btn').addEventListener('click',addStem);
+document.getElementById('add-extra-btn').addEventListener('click',addExtraAfter);
+
+function setupPhotoInput(inputId,imgId,boxId,retakeId,phId){
+  var input=document.getElementById(inputId);
+  var retakeBtn=document.getElementById(retakeId);
+  input.addEventListener('change',function(){
+    var file=this.files[0];
+    if(!file)return;
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var img=document.getElementById(imgId);
+      img.src=e.target.result;
+      img.style.display='block';
+      document.getElementById(phId).style.display='none';
+      document.getElementById(retakeId).style.display='block';
+      document.getElementById(boxId).classList.add('has-photo');
+    };
+    reader.readAsDataURL(file);
+  });
+  retakeBtn.addEventListener('click',function(e){
+    e.stopPropagation();
+    input.value='';
+    input.click();
+  });
+}
+
+setupPhotoInput('file-serial','img-serial','box-serial','retake-serial','ph-serial');
+setupPhotoInput('file-before','img-before','box-before','retake-before','ph-before');
+setupPhotoInput('file-after','img-after','box-after','retake-after','ph-after');
 
 function addExtraAfter(){
   if(extraAfterCount>=MAX_EXTRA)return;
   extraAfterCount++;
-  const idx=extraAfterCount;
-  const list=document.getElementById('extra-after-list');
-  const item=document.createElement('div');
-  item.className='extra-after-item';item.id='extra-item-'+idx;
-  item.innerHTML='<div class="photo-capture" id="box-extra-'+idx+'">'
-    +'<input type="file" accept="image/*" capture="environment" id="file-extra-'+idx+'">'
-    +'<div class="photo-placeholder" id="ph-extra-'+idx+'"><span class="photo-icon">&#128247;</span><div class="photo-label">Angle '+(idx+1)+'</div><div class="photo-sub">Tap to photograph</div></div>'
-    +'<img class="photo-preview" id="img-extra-'+idx+'">'
-    +'<button class="photo-retake" id="retake-extra-'+idx+'" onclick="retakePhoto('file-extra-'+idx+'',event)">Retake</button>'
+  var idx=extraAfterCount;
+  var list=document.getElementById('extra-after-list');
+  var item=document.createElement('div');
+  item.className='extra-after-item';
+  item.id='extra-item-'+idx;
+  var boxId='box-extra-'+idx;
+  var inputId='file-extra-'+idx;
+  var imgId='img-extra-'+idx;
+  var phId='ph-extra-'+idx;
+  var retakeId='retake-extra-'+idx;
+  item.innerHTML='<div class="photo-capture" id="'+boxId+'">'
+    +'<input type="file" accept="image/*" capture="environment" id="'+inputId+'">'
+    +'<div class="photo-placeholder" id="'+phId+'"><span class="photo-icon">&#128247;</span>'
+    +'<div class="photo-label">Angle '+(idx+1)+'</div>'
+    +'<div class="photo-sub">Tap to photograph</div></div>'
+    +'<img class="photo-preview" id="'+imgId+'">'
+    +'<button class="photo-retake" id="'+retakeId+'" type="button">Retake</button>'
     +'</div>'
-    +'<button class="remove-extra" onclick="removeExtraAfter('+idx+')">x</button>';
+    +'<button class="remove-extra" type="button" data-idx="'+idx+'">x</button>';
   list.appendChild(item);
+  setupPhotoInput(inputId,imgId,boxId,retakeId,phId);
+  item.querySelector('.remove-extra').addEventListener('click',function(){
+    item.remove();
+    extraAfterCount=document.querySelectorAll('.extra-after-item').length;
+    updateExtraUI();
+  });
   updateExtraUI();
 }
-function removeExtraAfter(idx){const item=document.getElementById('extra-item-'+idx);if(item)item.remove();extraAfterCount=document.querySelectorAll('.extra-after-item').length;updateExtraUI();}
+
 function updateExtraUI(){
-  const btn=document.getElementById('add-extra-btn'),hint=document.getElementById('photo-count-hint');
-  if(!btn)return;
-  const count=document.querySelectorAll('.extra-after-item').length;
-  extraAfterCount=count;btn.disabled=count>=MAX_EXTRA;
+  var btn=document.getElementById('add-extra-btn');
+  var hint=document.getElementById('photo-count-hint');
+  var count=document.querySelectorAll('.extra-after-item').length;
+  extraAfterCount=count;
+  btn.disabled=count>=MAX_EXTRA;
   hint.textContent=count>0?count+' extra angle'+(count>1?'s':'')+' added'+(count>=MAX_EXTRA?' (maximum)':''):'';
-}
-function getExtraAfterFiles(){
-  const files=[];
-  document.querySelectorAll('.extra-after-item').forEach(item=>{
-    const idx=item.id.replace('extra-item-','');
-    const input=document.getElementById('file-extra-'+idx);
-    if(input&&input.files[0])files.push(input.files[0]);
-  });
-  return files;
 }
 
 function addStem(){
-  const list=document.getElementById('stems-list'),row=document.createElement('div');
+  var list=document.getElementById('stems-list');
+  var row=document.createElement('div');
   row.className='stem-row';
-  row.innerHTML='<input type="text" placeholder="Stem type (e.g. White rose)"><input type="number" placeholder="Qty" min="1" style="max-width:80px"><button class="stem-remove" onclick="this.parentElement.remove()">x</button>';
-  list.appendChild(row);row.querySelector('input').focus();
+  row.innerHTML='<input type="text" placeholder="Stem type (e.g. White rose)">'
+    +'<input type="number" placeholder="Qty" min="1" style="max-width:80px">'
+    +'<button class="stem-remove" type="button">x</button>';
+  list.appendChild(row);
+  row.querySelector('.stem-remove').addEventListener('click',function(){row.remove();});
+  row.querySelector('input').focus();
 }
+
 function getStems(){
-  return Array.from(document.querySelectorAll('.stem-row')).map(row=>{
-    const inputs=row.querySelectorAll('input');
-    const type=inputs[0].value.trim(),qty=inputs[1].value.trim();
-    return type?(qty?qty+'x '+type:type):null;
-  }).filter(Boolean).join(', ');
+  var rows=document.querySelectorAll('.stem-row');
+  var out=[];
+  for(var i=0;i<rows.length;i++){
+    var inputs=rows[i].querySelectorAll('input');
+    var type=inputs[0].value.trim();
+    var qty=inputs[1].value.trim();
+    if(type)out.push(qty?qty+'x '+type:type);
+  }
+  return out.join(', ');
+}
+
+function getExtraFiles(){
+  var files=[];
+  var items=document.querySelectorAll('.extra-after-item');
+  for(var i=0;i<items.length;i++){
+    var idx=items[i].id.replace('extra-item-','');
+    var input=document.getElementById('file-extra-'+idx);
+    if(input&&input.files[0])files.push(input.files[0]);
+  }
+  return files;
 }
 
 function toB64(file){
-  return new Promise((res,rej)=>{
+  return new Promise(function(res,rej){
     if(!file)return res(null);
-    const r=new FileReader();
-    r.onload=e=>res(e.target.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);
+    var r=new FileReader();
+    r.onload=function(e){res(e.target.result.split(',')[1]);};
+    r.onerror=rej;
+    r.readAsDataURL(file);
   });
 }
 
 async function submitForm(){
-  const btn=document.getElementById('btn-next'),status=document.getElementById('status-msg');
+  var btn=document.getElementById('btn-next');
+  var status=document.getElementById('status-msg');
   btn.disabled=true;btn.textContent='Uploading...';
-  status.className='status-msg';status.textContent='Uploading photos and saving record...';
-  const sF=document.getElementById('file-serial').files[0];
-  const bF=document.getElementById('file-before').files[0];
-  const aF=document.getElementById('file-after').files[0];
-  const extraFiles=getExtraAfterFiles();
-  const ts=Date.now();
-  const [s64,b64,a64,...extra64s]=await Promise.all([toB64(sF),toB64(bF),toB64(aF),...extraFiles.map(f=>toB64(f))]);
-  const payload={
+  status.className='status-msg';status.textContent='Saving record...';
+  var sF=document.getElementById('file-serial').files[0];
+  var bF=document.getElementById('file-before').files[0];
+  var aF=document.getElementById('file-after').files[0];
+  var extraFiles=getExtraFiles();
+  var ts=Date.now();
+  var all=await Promise.all([toB64(sF),toB64(bF),toB64(aF)].concat(extraFiles.map(function(f){return toB64(f);})));
+  var s64=all[0],b64=all[1],a64=all[2],extra64s=all.slice(3);
+  var payload={
     staffName:document.getElementById('staff-name').value.trim(),
     location:document.getElementById('location').value.trim(),
     serialText:document.getElementById('serial-text').value.trim(),
-    stems:getStems(),notes:document.getElementById('notes').value.trim(),
+    stems:getStems(),
+    notes:document.getElementById('notes').value.trim(),
     timestamp:new Date().toISOString(),
     serialImage:s64?{data:s64,mimeType:sF.type,name:'serial_'+ts+'.jpg'}:null,
     beforeImage:b64?{data:b64,mimeType:bF.type,name:'before_'+ts+'.jpg'}:null,
     afterImage:a64?{data:a64,mimeType:aF.type,name:'after_'+ts+'.jpg'}:null,
-    extraAfterImages:extra64s.map((data,i)=>data?{data,mimeType:extraFiles[i].type,name:'after_extra'+(i+2)+'_'+ts+'.jpg'}:null).filter(Boolean)
+    extraAfterImages:extra64s.map(function(data,i){return data?{data:data,mimeType:extraFiles[i].type,name:'after_extra'+(i+2)+'_'+ts+'.jpg'}:null;}).filter(Boolean)
   };
   try{
-    const res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)});
-    const json=await res.json();
+    var res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)});
+    var json=await res.json();
     if(json.status==='ok'){
-      const meta=document.getElementById('success-meta');
-      const photoCount=[s64,b64,a64,...extra64s].filter(Boolean).length;
+      var meta=document.getElementById('success-meta');
+      var photoCount=[s64,b64,a64].concat(extra64s).filter(Boolean).length;
       meta.innerHTML='<p><strong>'+(payload.staffName||'Staff')+'</strong> - '+(payload.location||'No location')+'</p>'
         +'<p>Serial: <strong>'+(payload.serialText||'(photo only)')+'</strong></p>'
         +(payload.stems?'<p>Stems: <strong>'+payload.stems+'</strong></p>':'')
@@ -260,16 +326,18 @@ async function submitForm(){
       showStep(totalSteps);
     }else{throw new Error(json.message||'Unknown error');}
   }catch(err){
-    status.className='status-msg error';status.textContent='Error: '+err.message;
+    status.className='status-msg error';
+    status.textContent='Error: '+err.message;
     btn.disabled=false;btn.textContent='Submit record';
   }
 }
 
 function resetForm(){
-  ['staff-name','location','serial-text','notes'].forEach(id=>document.getElementById(id).value='');
-  ['serial','before','after'].forEach(key=>{
+  ['staff-name','location','serial-text','notes'].forEach(function(id){document.getElementById(id).value='';});
+  ['serial','before','after'].forEach(function(key){
     document.getElementById('file-'+key).value='';
-    const img=document.getElementById('img-'+key);img.src='';img.style.display='none';
+    var img=document.getElementById('img-'+key);
+    img.src='';img.style.display='none';
     document.getElementById('ph-'+key).style.display='';
     document.getElementById('retake-'+key).style.display='none';
     document.getElementById('box-'+key).classList.remove('has-photo');
@@ -283,35 +351,6 @@ function resetForm(){
   extraAfterCount=0;updateExtraUI();showStep(0);addStem();
 }
 
-// iOS camera fix - use addEventListener instead of inline onchange
-['serial','before','after'].forEach(key=>{
-  const el=document.getElementById('file-'+key);
-  if(el){
-    el.removeAttribute('onchange');
-    el.addEventListener('change',function(){
-      handlePhoto(this,'img-'+key,'box-'+key,'retake-'+key,'ph-'+key);
-    });
-  }
-});
-['serial','before','after'].forEach(function(key){
-  var el=document.getElementById('file-'+key);
-  if(el){
-    el.addEventListener('change',function(e){
-      var file=e.target.files[0];
-      if(!file)return;
-      var reader=new FileReader();
-      reader.onload=function(ev){
-        var img=document.getElementById('img-'+key);
-        img.src=ev.target.result;
-        img.style.display='block';
-        document.getElementById('ph-'+key).style.display='none';
-        document.getElementById('retake-'+key).style.display='block';
-        document.getElementById('box-'+key).classList.add('has-photo');
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-});
 addStem();updateNav();
 </script>
 </body>
