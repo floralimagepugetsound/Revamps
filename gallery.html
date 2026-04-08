@@ -122,13 +122,13 @@ function render(records){
       ch.innerHTML='<div><div class="card-location">'+(r.location||'Unknown location')+'</div>'+(r.serial?'<div class="card-serial">'+r.serial+'</div>':'')+'</div><div class="card-time">'+fmtTime(r.timestamp)+'</div>';
       card.appendChild(ch);
       var pr=document.createElement('div');pr.className='photos-row';
-      pr.appendChild(photoCell(r.beforePhoto,'Before',(r.location||'')+' ÃÂ¢ÃÂÃÂ Before'));
-      pr.appendChild(photoCell(r.afterPhoto,'After',(r.location||'')+' ÃÂ¢ÃÂÃÂ After'));
+      pr.appendChild(photoCell(r.beforePhoto,'Before',(r.location||'')+' ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Before'));
+      pr.appendChild(photoCell(r.afterPhoto,'After',(r.location||'')+' ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ After'));
       card.appendChild(pr);
       var extras=[r.afterPhoto2,r.afterPhoto3,r.afterPhoto4,r.afterPhoto5,r.afterPhoto6].map(toDriveImg).filter(function(u){return u&&u.length>10;});
       if(extras.length){
         var er=document.createElement('div');er.className='extras-row';er.style.gridTemplateColumns='repeat('+Math.min(extras.length,3)+',1fr)';
-        extras.slice(0,3).forEach(function(url,i){er.appendChild(photoCell(url,'Angle '+(i+2),(r.location||'')+' ÃÂ¢ÃÂÃÂ Angle '+(i+2)));});
+        extras.slice(0,3).forEach(function(url,i){er.appendChild(photoCell(url,'Angle '+(i+2),(r.location||'')+' ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Angle '+(i+2)));});
         card.appendChild(er);
       }
       var hasFooter=r.stems||r.notes||r.staff;
