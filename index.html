@@ -283,6 +283,16 @@ function resetForm(){
   extraAfterCount=0;updateExtraUI();showStep(0);addStem();
 }
 
+// iOS camera fix - use addEventListener instead of inline onchange
+['serial','before','after'].forEach(key=>{
+  const el=document.getElementById('file-'+key);
+  if(el){
+    el.removeAttribute('onchange');
+    el.addEventListener('change',function(){
+      handlePhoto(this,'img-'+key,'box-'+key,'retake-'+key,'ph-'+key);
+    });
+  }
+});
 addStem();updateNav();
 </script>
 </body>
