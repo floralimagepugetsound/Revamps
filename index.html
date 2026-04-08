@@ -80,7 +80,7 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
     <div class="field"><label>Location / client</label><input type="text" id="location" placeholder="e.g. NAB Canberra - Reception"></div>
     <div class="field"><label>Serial number photo</label>
       <div class="photo-capture" id="box-serial">
-        <input type="file" accept="image/*" capture="environment" id="file-serial" onchange="handlePhoto(this,'img-serial','box-serial','retake-serial','ph-serial')">
+        <input type="file" accept="image/*" capture="environment" id="file-serial">
         <div class="photo-placeholder" id="ph-serial"><span class="photo-icon">&#127991;</span><div class="photo-label">Photograph serial number</div><div class="photo-sub">Tap to open camera</div></div>
         <img class="photo-preview" id="img-serial"><button class="photo-retake" id="retake-serial" onclick="retakePhoto('file-serial',event)">Retake</button>
       </div>
@@ -92,7 +92,7 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
     <div class="step-label">Step 2 of 4</div><div class="step-title">Before photo</div>
     <div class="field"><label>Current arrangement</label>
       <div class="photo-capture" id="box-before">
-        <input type="file" accept="image/*" capture="environment" id="file-before" onchange="handlePhoto(this,'img-before','box-before','retake-before','ph-before')">
+        <input type="file" accept="image/*" capture="environment" id="file-before">
         <div class="photo-placeholder" id="ph-before"><span class="photo-icon">&#128248;</span><div class="photo-label">Photograph before revamp</div><div class="photo-sub">Show the full arrangement clearly</div></div>
         <img class="photo-preview" id="img-before"><button class="photo-retake" id="retake-before" onclick="retakePhoto('file-before',event)">Retake</button>
       </div>
@@ -107,7 +107,7 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
     <div class="step-label">Step 4 of 4</div><div class="step-title">After photos</div>
     <div class="field"><label>Main photo</label>
       <div class="photo-capture" id="box-after">
-        <input type="file" accept="image/*" capture="environment" id="file-after" onchange="handlePhoto(this,'img-after','box-after','retake-after','ph-after')">
+        <input type="file" accept="image/*" capture="environment" id="file-after">
         <div class="photo-placeholder" id="ph-after"><span class="photo-icon">&#128144;</span><div class="photo-label">Photograph finished revamp</div><div class="photo-sub">Show the full arrangement clearly</div></div>
         <img class="photo-preview" id="img-after"><button class="photo-retake" id="retake-after" onclick="retakePhoto('file-after',event)">Retake</button>
       </div>
@@ -177,7 +177,7 @@ function addExtraAfter(){
   const item=document.createElement('div');
   item.className='extra-after-item';item.id='extra-item-'+idx;
   item.innerHTML='<div class="photo-capture" id="box-extra-'+idx+'">'
-    +'<input type="file" accept="image/*" capture="environment" id="file-extra-'+idx+'" onchange="handlePhoto(this,'img-extra-'+idx+'','box-extra-'+idx+'','retake-extra-'+idx+'','ph-extra-'+idx+'')">'
+    +'<input type="file" accept="image/*" capture="environment" id="file-extra-'+idx+'">'
     +'<div class="photo-placeholder" id="ph-extra-'+idx+'"><span class="photo-icon">&#128247;</span><div class="photo-label">Angle '+(idx+1)+'</div><div class="photo-sub">Tap to photograph</div></div>'
     +'<img class="photo-preview" id="img-extra-'+idx+'">'
     +'<button class="photo-retake" id="retake-extra-'+idx+'" onclick="retakePhoto('file-extra-'+idx+'',event)">Retake</button>'
@@ -290,6 +290,25 @@ function resetForm(){
     el.removeAttribute('onchange');
     el.addEventListener('change',function(){
       handlePhoto(this,'img-'+key,'box-'+key,'retake-'+key,'ph-'+key);
+    });
+  }
+});
+['serial','before','after'].forEach(function(key){
+  var el=document.getElementById('file-'+key);
+  if(el){
+    el.addEventListener('change',function(e){
+      var file=e.target.files[0];
+      if(!file)return;
+      var reader=new FileReader();
+      reader.onload=function(ev){
+        var img=document.getElementById('img-'+key);
+        img.src=ev.target.result;
+        img.style.display='block';
+        document.getElementById('ph-'+key).style.display='none';
+        document.getElementById('retake-'+key).style.display='block';
+        document.getElementById('box-'+key).classList.add('has-photo');
+      };
+      reader.readAsDataURL(file);
     });
   }
 });
