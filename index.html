@@ -65,7 +65,7 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
 .divider{display:flex;align-items:center;gap:10px;margin:20px 0}
 .divider span{font-size:11px;color:var(--text-muted);white-space:nowrap;text-transform:uppercase;letter-spacing:.06em}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
-</style>
+.spinner-overlay{display:none;position:fixed;inset:0;background:rgba(26,58,42,0.7);z-index:100;align-items:center;justify-content:center;flex-direction:column;gap:16px}.spinner-overlay.active{display:flex}.spinner{width:44px;height:44px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.spinner-text{color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500}</style>
 </head>
 <body>
 <div class="app">
@@ -136,6 +136,7 @@ textarea{min-height:90px;resize:vertical;line-height:1.5}
   <button class="btn" id="btn-back" type="button" style="display:none">Back</button>
   <button class="btn primary" id="btn-next" type="button">Next</button>
 </div>
+<div class="spinner-overlay" id="spinner"><div class="spinner"></div><div class="spinner-text">Uploading photos...</div></div>
 </div>
 <script>
 var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbycfZwUTmXZLuuaDEX7tLkXG-1V5p6ZFPqqQqJYnwWBhieWhMfMcF1MSka4IBnG9rNi7w/exec';
@@ -292,7 +293,7 @@ function toB64(file){
 async function submitForm(){
   var btn=document.getElementById('btn-next');
   var status=document.getElementById('status-msg');
-  btn.disabled=true;btn.textContent='Uploading...';
+  btn.disabled=true;btn.textContent='Uploading...';document.getElementById('spinner').classList.add('active');
   status.className='status-msg';status.textContent='Saving record...';
   var sF=document.getElementById('file-serial').files[0];
   var bF=document.getElementById('file-before').files[0];
@@ -323,10 +324,10 @@ async function submitForm(){
         +'<p>Serial: <strong>'+(payload.serialText||'(photo only)')+'</strong></p>'
         +(payload.stems?'<p>Stems: <strong>'+payload.stems+'</strong></p>':'')
         +'<p>Photos: <strong>'+photoCount+' uploaded</strong></p>';
-      showStep(totalSteps);
+      document.getElementById('spinner').classList.remove('active');showStep(totalSteps);
     }else{throw new Error(json.message||'Unknown error');}
   }catch(err){
-    status.className='status-msg error';
+    document.getElementById('spinner').classList.remove('active');status.className='status-msg error';
     status.textContent='Error: '+err.message;
     btn.disabled=false;btn.textContent='Submit record';
   }
